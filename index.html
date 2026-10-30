@@ -325,7 +325,7 @@
       if(current >= questions.length){
         qText.textContent = 'پرسش‌ها تمام شد — با تشکر از مشارکت شما';
         qOptions.innerHTML = '';
-        nextBtn.disabled = true;
+        nextBtn.classList.add('hidden');   // حذف دکمه بعدی
         finishBtn.classList.remove('hidden');
         status.textContent = ' "پایان" کلیک کنید';
       } else {
