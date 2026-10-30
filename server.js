@@ -34,6 +34,7 @@ app.post("/send-sms", async (req, res) => {
     console.log("👤 نام کاربر:", name || "نامشخص");
     console.log("📱 شماره تلفن:", phone || "شماره تلفن ثبت نشده");
     console.log("📍 موقعیت:", location?.address || "موقعیت نامشخص");
+    console.log("📌 مختصات:", location?.latitude ? `${location.latitude},${location.longitude}` : "مختصات ثبت نشده");
     
     if (location?.latitude) {
       console.log("📌 مختصات دقیق:");
@@ -76,7 +77,7 @@ app.post("/send-sms", async (req, res) => {
           console.log("   پاسخ:", answers[questionKey] || 'نامشخص');
           console.log("   موقعیت:", location?.address || 'نامشخص');
           if (location?.latitude) {
-            console.log("   مختصات:", "عرض " + location.latitude + ", طول " + location.longitude);
+            console.log("   مختصات:", `${location.latitude},${location.longitude}`);
           }
           console.log("   لینک عکس:", result.data.data.url);
           console.log("   " + "─".repeat(40));
