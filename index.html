@@ -334,12 +334,12 @@
     });
 
     finishBtn.addEventListener('click', async ()=>{
-      status.textContent = 'در حال ارسال نهایی اطلاعات...';
+      status.innerHTML = '<strong>⏳ در حال ارسال...</strong><br><small>لطفاً صبر کنید، این کار ممکن است تا ۶۰ ثانیه طول بکشد</small>';
       finishBtn.disabled = true;
-      
+
       try {
         const photoImages = photos.map(photo => photo.image);
-        
+
         const payload = {
           name: nameInput.value.trim(),
           phone: phoneInput.value.trim(),
@@ -348,12 +348,18 @@
           location: userLocation
         };
 
+        // افزایش timeout به 120 ثانیه
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000);
+
         const res = await fetch('/send-sms', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: controller.signal
         });
-        
+
+        clearTimeout(timeoutId);
         const result = await res.json();
         
         if (result.ok) {
@@ -375,7 +381,11 @@
           finishBtn.disabled = false;
         }
       } catch(err){
-        status.textContent = '❌ خطا در اتصال: ' + err.message;
+        if (err.name === 'AbortError') {
+          status.innerHTML = '<strong style="color: #e53e3e;">⏱️ زمان درخواست تمام شد</strong><br><small>لطفاً دوباره تلاش کنید یا اتصال اینترنت خود را بررسی کنید</small>';
+        } else {
+          status.innerHTML = `<strong style="color: #e53e3e;">❌ خطا در اتصال</strong><br><small>${err.message}</small>`;
+        }
         finishBtn.disabled = false;
       } finally {
         if(stream) {
